@@ -13,7 +13,7 @@ const doctors = [
   },
   {
     id: 2,
-    name: "dr. Tanti Mariana Wahono, SpOG",
+    name: "dr. Tanti Mariana, SpOG",
     price: "Rp49.000",
     oldPrice: "Rp79.000",
     specialty: "Spesialis Kandungan",
