@@ -1,39 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, StyleSheet } from "react-native";
-import { MessageText, ProfileCircle, MessageEdit } from "iconsax-react-native";
+import { MessageText, ProfileCircle } from "iconsax-react-native";
 import { colors, fontType } from "./src/assets/themes"; // Menggunakan index.js untuk import warna & font
-
-const doctors = [
-  {
-    id: 1,
-    name: "Chat Dokter Umum",
-    price: "Rp14.900",
-    image: "https://randomuser.me/api/portraits/men/32.jpg", 
-    status: "Chat Sekarang",
-  },
-  {
-    id: 2,
-    name: "dr. Tanti Mariana, SpOG",
-    price: "Rp49.000",
-    oldPrice: "Rp79.000",
-    specialty: "Spesialis Kandungan",
-    rating: "97%",
-    reviews: "8,2rb",
-    image: "https://randomuser.me/api/portraits/women/65.jpg", 
-    status: "Online",
-  },
-  {
-    id: 3,
-    name: "dr. I Kadek Serisana Wasita, Sp.A",
-    price: "Rp49.000",
-    oldPrice: "Rp79.000",
-    specialty: "Spesialis Anak",
-    image: "https://randomuser.me/api/portraits/men/45.jpg", 
-    status: "Online",
-  },
-];
+import { doctors, categories } from "./src/data"; // Mengimpor data dokter dan kategori
 
 const App = () => {
+  const [selectedCategory, setSelectedCategory] = useState("Semua");
+  const [filteredDoctors, setFilteredDoctors] = useState(doctors);
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -47,24 +22,53 @@ const App = () => {
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
-        <TextInput style={styles.searchInput} placeholder="Cari nama dokter atau spesialisasi" />
-      </View>
+  <TextInput
+    style={styles.searchInput}
+    placeholder="Cari nama dokter atau spesialisasi"
+    value={searchQuery}
+    onChangeText={(text) => {
+      setSearchQuery(text);
 
-      {/* Categories */}
-<View style={styles.categoryContainer}>
-  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-    {["Umum", "Anak", "Kandungan", "Kulit", "Gigi", "Psikolog"].map((category, index) => (
-      <TouchableOpacity key={index} style={styles.categoryButton}>
-        <Text style={styles.categoryText}>{category}</Text>
-      </TouchableOpacity>
-    ))}
-  </ScrollView>
+      const filtered = doctors.filter((doc) => {
+        const nameMatch = doc.name.toLowerCase().includes(text.toLowerCase());
+        const specialtyMatch = doc.specialty?.toLowerCase().includes(text.toLowerCase());
+        return nameMatch || specialtyMatch;
+      });
+
+      setFilteredDoctors(filtered);
+      setSelectedCategory("Semua");
+    }}
+  />
 </View>
 
 
-      {/* Doctors List */}
+      {/* Kategori */}
+      <View style={styles.categoryContainer}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {categories.map((category, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.categoryButton}
+              onPress={() => {
+                setSelectedCategory(category);
+
+                // Filter dokter berdasarkan kategori
+                if (category === "Semua") {
+                  setFilteredDoctors(doctors);
+                } else {
+                  setFilteredDoctors(doctors.filter((doc) => doc.specialty === category));
+                }
+              }}
+            >
+              <Text style={styles.categoryText}>{category}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* Daftar Dokter */}
       <ScrollView style={styles.doctorList}>
-        {doctors.map((doctor) => (
+        {filteredDoctors.map((doctor) => (
           <View key={doctor.id} style={styles.card}>
             <Image source={{ uri: doctor.image }} style={styles.profileImage} />
             <View style={styles.info}>
@@ -90,11 +94,11 @@ const App = () => {
       {/* Bottom Navigation */}
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navButton}>
-        <MessageText size={24} color={colors.primary} variant="Outline" />
+          <MessageText size={24} color={colors.primary} variant="Outline" />
           <Text style={styles.navText}>Chat</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navButton}>
-        <ProfileCircle size={24} color="gray" variant="Outline" />
+          <ProfileCircle size={24} color="gray" variant="Outline" />
           <Text style={styles.navText}>Profile</Text>
         </TouchableOpacity>
       </View>
@@ -139,7 +143,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingHorizontal: 10,
   },
-  
   categoryButton: {
     backgroundColor: "#f2f2f2",
     paddingVertical: 8,
@@ -147,13 +150,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginRight: 10,
   },
-  
   categoryText: {
     color: colors.textPrimary,
     fontSize: 14,
     fontFamily: fontType["Pjs-Regular"],
   },
-  
   searchInput: {
     backgroundColor: "#f0f0f0",
     padding: 10,

@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@d11/react-native-fast-image": "^8.9.2",
     "@expo/vector-icons": "^14.0.4",
     "expo-font": "^13.0.4",
     "iconsax-react-native": "^0.0.8",
