@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, ScrollView, StyleSheet } from "react-native";
 import { MessageText, ProfileCircle } from "iconsax-react-native";
-import { colors, fontType } from "./src/assets/themes"; // Menggunakan index.js untuk import warna & font
 import { doctors, categories } from "./src/data"; // Mengimpor data dokter dan kategori
+import { colors, fontType } from "./src/assets/themes"; // Menggunakan index.js untuk import warna & font
+
 
 const App = () => {
   const [selectedCategory, setSelectedCategory] = useState("Semua");
